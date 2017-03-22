@@ -26,6 +26,28 @@ class TaskService {
         return task;
     }
 
+    static async removeTaskSyncDataset(id) {
+        logger.info('Removing task with datasetId ', id);
+        const tasksFinded = await TaskModel.find({
+            datasetId: id
+        });
+        if (tasksFinded) {
+            for (let i = 0, length = tasksFinded.length; i < length; i++) {
+                const task = tasksFinded[i];
+                if (tasks[task._id]) {
+                    tasks[task._id].stop();
+                    delete tasks[task._id];
+                    logger.debug('Stopped correctly');
+                } else {
+                    logger.debug('Dont exist cron in cache');
+                }
+            }
+        }
+        await TaskModel.remove({
+            datasetId: id
+        });
+    }
+
     static async updateSyncDatasetTask(data) {
         logger.debug('Checking if exists');
         let task = await TaskModel.findOne({

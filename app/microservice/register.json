@@ -33,5 +33,13 @@
 			"method": "PUT",
 			"path": "/api/v1/task/sync-dataset/by-dataset"
 		}
+	}, {
+		"path": "/v1/task/sync-dataset/by-dataset/:id",
+		"method": "DELETE",
+		"authenticated": "true",
+		"redirect": {
+			"method": "DELETE",
+			"path": "/api/v1/task/sync-dataset/by-dataset/:id"
+		}
 	}]
 }

@@ -1,0 +1,25 @@
+develop:
+  extends:
+    file: base.yml
+    service: base
+  ports:
+    - "35739:35729"
+  environment:
+    CT_URL: http://mymachine:9000 
+    LOCAL_URL: http://mymachine:5005
+    CT_TOKEN: null
+    API_VERSION: v1
+  command: develop
+  volumes:
+    - ./app:/opt/task-executor/app
+  links: 
+    - mongo
+mongo:
+  image: mongo:3.4
+  container_name: task-executor-mongo-develop
+  command: --smallfiles
+  ports:
+    - "27017"
+  volumes:
+    - $HOME/docker/data/task-executor:/data/db
+  restart: always

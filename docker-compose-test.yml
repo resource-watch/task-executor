@@ -1,0 +1,11 @@
+test:
+  extends:
+    file: base.yml
+    service: base
+  ports:
+    - "5005"
+  container_name: task-executor-test
+  environment:
+    NODE_ENV: test
+    CT_URL: http://mymachine:9000
+  command: test

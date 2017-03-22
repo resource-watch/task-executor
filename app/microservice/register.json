@@ -1,0 +1,37 @@
+{
+	"name": "task-executor",
+	"tags": ["gfw", "rw"],
+	"endpoints": [{
+		"path": "/v1/task",
+		"method": "GET",
+		"authenticated": "true",
+		"redirect": {
+			"method": "GET",
+			"path": "/api/v1/task"
+		}
+	},{
+		"path": "/v1/task/:id",
+		"method": "DELETE",
+		"authenticated": "true",
+		"redirect": {
+			"method": "DELETE",
+			"path": "/api/v1/task/:id"
+		}
+	}, {
+		"path": "/v1/task/sync-dataset",
+		"method": "POST",
+		"authenticated": "true",
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/task/sync-dataset"
+		}
+	}, {
+		"path": "/v1/task/sync-dataset/by-dataset",
+		"method": "PUT",
+		"authenticated": "true",
+		"redirect": {
+			"method": "PUT",
+			"path": "/api/v1/task/sync-dataset/by-dataset"
+		}
+	}]
+}

@@ -1,0 +1,8 @@
+{
+    "logger": {
+        "name": "task-executor",
+        "level": "warn",
+        "toFile": false,
+        "dirLogFile": null
+    }
+}

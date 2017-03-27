@@ -82,7 +82,6 @@ const onDbReady = (err) => {
             logger.error('Error loading tasks', error);
             process.exit(1);
         });
-        
     });
     logger.info('Server started in ', process.env.PORT);
 };

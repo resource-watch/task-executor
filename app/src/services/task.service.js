@@ -3,9 +3,23 @@ const TaskModel = require('models/task.model');
 const CronJob = require('cron').CronJob;
 const DatasetTaskService = require('services/dataset-task.service');
 const RetraivingError = require('errors/retraiving.error');
+
 const tasks = {};
 
 class TaskService {
+
+    static async loadAllTasks() {
+        logger.debug('Loading all tasks');
+        const tasksFinded = await TaskModel.find();
+        if (tasks) {
+            for (let i = 0, length = tasksFinded.length; i < length; i++) {
+                const task = tasksFinded[i];
+                const datasetTask = new DatasetTaskService(task);
+                tasks[task._id] = new CronJob(task.cronPattern, datasetTask.tick.bind(datasetTask), null, true, task.timezone);
+            }
+        }
+        logger.info('Loaded all tasks');
+    }
 
     static async createSyncDatasetTask(data) {
         logger.info('Creating task');

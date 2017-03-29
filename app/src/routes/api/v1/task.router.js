@@ -43,6 +43,12 @@ class TaskRouter {
         ctx.body = '';
     }
 
+    static async hook(ctx) {
+        logger.info('Executing task by hook');
+        await TaskService.executeTaskSyncDataset(ctx.params.id);
+        ctx.body = '';
+    }
+
 }
 
 const isMicroservice = async (ctx, next) => {
@@ -77,12 +83,13 @@ const isAdmin = async (ctx, next) => {
     await next();
 };
 
-router.get('/', TaskRouter.get);
+router.get('/', isAdmin, TaskRouter.get);
 // TODO: Check permissions to this endpoint
-router.delete('/:id', isAdmin, TaskValidator.existTask, TaskRouter.get);
+// router.delete('/:id', isAdmin, TaskValidator.existTask, TaskRouter.get);
 router.post('/sync-dataset', isMicroservice, TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.createTaskSyncDataset);
 router.put('/sync-dataset/by-dataset', TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.updateTaskSyncDataset);
 router.delete('/sync-dataset/by-dataset/:id', TaskRouter.removeTaskSyncDataset);
+router.post('/sync-dataset/by-dataset/:id/hook', TaskRouter.hook);
 
 
 module.exports = router;

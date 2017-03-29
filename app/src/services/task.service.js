@@ -3,6 +3,7 @@ const TaskModel = require('models/task.model');
 const CronJob = require('cron').CronJob;
 const DatasetTaskService = require('services/dataset-task.service');
 const RetraivingError = require('errors/retraiving.error');
+const NotFoundError = require('errors/notFound.error');
 
 const tasks = {};
 
@@ -60,6 +61,19 @@ class TaskService {
         await TaskModel.remove({
             datasetId: id
         });
+    }
+
+    static async executeTaskSyncDataset(datasetId) {
+        logger.debug('Executing task with datasetId', datasetId);
+        const task = await TaskModel.findOne({
+            datasetId
+        });
+        if (!task) {
+            logger.error(`Task with datasetId ${datasetId} not found`);
+            throw new NotFoundError(404, `Task with datasetId ${datasetId} not found`);
+        }
+        const datasetTask = new DatasetTaskService(task);
+        datasetTask.tick();
     }
 
     static async updateSyncDatasetTask(data) {

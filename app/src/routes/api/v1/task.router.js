@@ -37,12 +37,59 @@ class TaskRouter {
         ctx.body = TaskSerializer.serialize(task);
     }
 
+    static async removeTaskSyncDataset(ctx) {
+        logger.info('Removing task of sync dataset');
+        await TaskService.removeTaskSyncDataset(ctx.params.id);
+        ctx.body = '';
+    }
+
+    static async hook(ctx) {
+        logger.info('Executing task by hook');
+        await TaskService.executeTaskSyncDataset(ctx.params.id);
+        ctx.body = '';
+    }
+
 }
 
-router.get('/', TaskRouter.get);
-router.delete('/:id', TaskValidator.existTask, TaskRouter.get);
-router.post('/sync-dataset', TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.createTaskSyncDataset);
+const isMicroservice = async (ctx, next) => {
+    let loggedUser = ctx.request.body.loggedUser;
+    if (!loggedUser) {
+        loggedUser = JSON.parse(ctx.query.loggedUser);
+    }
+    if (!loggedUser) {
+        ctx.throw(403, 'Not authorized');
+        return;
+    }
+    if (loggedUser.id !== 'microservice') {
+        ctx.throw(403, 'Not authorized');
+        return;
+    }
+    await next();
+};
+
+const isAdmin = async (ctx, next) => {
+    let loggedUser = ctx.request.body.loggedUser;
+    if (!loggedUser) {
+        loggedUser = JSON.parse(ctx.query.loggedUser);
+    }
+    if (!loggedUser) {
+        ctx.throw(403, 'Not authorized');
+        return;
+    }
+    if (loggedUser.role !== 'ADMIN') {
+        ctx.throw(403, 'Not authorized');
+        return;
+    }
+    await next();
+};
+
+router.get('/', isAdmin, TaskRouter.get);
+// TODO: Check permissions to this endpoint
+// router.delete('/:id', isAdmin, TaskValidator.existTask, TaskRouter.get);
+router.post('/sync-dataset', isMicroservice, TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.createTaskSyncDataset);
 router.put('/sync-dataset/by-dataset', TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.updateTaskSyncDataset);
+router.delete('/sync-dataset/by-dataset/:id', TaskRouter.removeTaskSyncDataset);
+router.post('/sync-dataset/by-dataset/:id/hook', TaskRouter.hook);
 
 
 module.exports = router;

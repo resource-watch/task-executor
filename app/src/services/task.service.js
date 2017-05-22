@@ -3,9 +3,24 @@ const TaskModel = require('models/task.model');
 const CronJob = require('cron').CronJob;
 const DatasetTaskService = require('services/dataset-task.service');
 const RetraivingError = require('errors/retraiving.error');
+const NotFoundError = require('errors/notFound.error');
+
 const tasks = {};
 
 class TaskService {
+
+    static async loadAllTasks() {
+        logger.debug('Loading all tasks');
+        const tasksFinded = await TaskModel.find();
+        if (tasks) {
+            for (let i = 0, length = tasksFinded.length; i < length; i++) {
+                const task = tasksFinded[i];
+                const datasetTask = new DatasetTaskService(task);
+                tasks[task._id] = new CronJob(task.cronPattern, datasetTask.tick.bind(datasetTask), null, true, task.timezone);
+            }
+        }
+        logger.info('Loaded all tasks');
+    }
 
     static async createSyncDatasetTask(data) {
         logger.info('Creating task');
@@ -24,6 +39,41 @@ class TaskService {
         tasks[task._id] = new CronJob(task.cronPattern, datasetTask.tick.bind(datasetTask), null, true, task.timezone);
         logger.info('Task created successfully');
         return task;
+    }
+
+    static async removeTaskSyncDataset(id) {
+        logger.info('Removing task with datasetId ', id);
+        const tasksFinded = await TaskModel.find({
+            datasetId: id
+        });
+        if (tasksFinded) {
+            for (let i = 0, length = tasksFinded.length; i < length; i++) {
+                const task = tasksFinded[i];
+                if (tasks[task._id]) {
+                    tasks[task._id].stop();
+                    delete tasks[task._id];
+                    logger.debug('Stopped correctly');
+                } else {
+                    logger.debug('Dont exist cron in cache');
+                }
+            }
+        }
+        await TaskModel.remove({
+            datasetId: id
+        });
+    }
+
+    static async executeTaskSyncDataset(datasetId) {
+        logger.debug('Executing task with datasetId', datasetId);
+        const task = await TaskModel.findOne({
+            datasetId
+        });
+        if (!task) {
+            logger.error(`Task with datasetId ${datasetId} not found`);
+            throw new NotFoundError(404, `Task with datasetId ${datasetId} not found`);
+        }
+        const datasetTask = new DatasetTaskService(task);
+        datasetTask.tick();
     }
 
     static async updateSyncDatasetTask(data) {

@@ -8,6 +8,7 @@ const ctRegisterMicroservice = require('ct-register-microservice-node');
 const ErrorSerializer = require('serializers/error.serializer');
 const mongoose = require('mongoose');
 const koaValidate = require('koa-validate');
+const TaskService = require('services/task.service');
 
 mongoose.Promise = Promise;
 
@@ -74,6 +75,11 @@ const onDbReady = (err) => {
             active: true,
         }).then(() => {}, (err) => {
             logger.error(err);
+            process.exit(1);
+        });
+        logger.info('Loading tasks');
+        TaskService.loadAllTasks().then(() => logger.info('Loaded all tasks correctly'), (error) => {
+            logger.error('Error loading tasks', error);
             process.exit(1);
         });
     });

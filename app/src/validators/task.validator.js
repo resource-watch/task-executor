@@ -10,7 +10,7 @@ class TaskValidator {
             ctx.throw(404, 'Task not found');
             return;
         }
-
+        ctx.state.task = task;
         await next();
 
     }

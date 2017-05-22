@@ -9,14 +9,6 @@
 			"method": "GET",
 			"path": "/api/v1/task"
 		}
-	},{
-		"path": "/v1/task/:id",
-		"method": "DELETE",
-		"authenticated": "true",
-		"redirect": {
-			"method": "DELETE",
-			"path": "/api/v1/task/:id"
-		}
 	}, {
 		"path": "/v1/task/sync-dataset",
 		"method": "POST",
@@ -32,6 +24,22 @@
 		"redirect": {
 			"method": "PUT",
 			"path": "/api/v1/task/sync-dataset/by-dataset"
+		}
+	}, {
+		"path": "/v1/task/sync-dataset/by-dataset/:id",
+		"method": "DELETE",
+		"authenticated": "true",
+		"redirect": {
+			"method": "DELETE",
+			"path": "/api/v1/task/sync-dataset/by-dataset/:id"
+		}
+	}, {
+		"path": "/v1/task/sync-dataset/by-dataset/:id/hook",
+		"method": "POST",
+		"authenticated": "true",
+		"redirect": {
+			"method": "POST",
+			"path": "/api/v1/task/sync-dataset/by-dataset/:id/hook"
 		}
 	}]
 }

@@ -52,7 +52,7 @@ class TaskRouter {
 }
 
 const isMicroservice = async (ctx, next) => {
-    let loggedUser = ctx.request.body.loggedUser;
+    let { loggedUser } = ctx.request.body;
     if (!loggedUser) {
         loggedUser = JSON.parse(ctx.query.loggedUser);
     }
@@ -68,7 +68,7 @@ const isMicroservice = async (ctx, next) => {
 };
 
 const isAdmin = async (ctx, next) => {
-    let loggedUser = ctx.request.body.loggedUser;
+    let { loggedUser } = ctx.request.body;
     if (!loggedUser) {
         loggedUser = JSON.parse(ctx.query.loggedUser);
     }

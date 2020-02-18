@@ -2,6 +2,7 @@ const logger = require('logger');
 const request = require('request-promise');
 const ctRegisterMicroservice = require('ct-register-microservice-node');
 const RetraivingError = require('errors/retraiving.error');
+
 class DatasetTaskService {
 
     constructor(task) {
@@ -29,7 +30,7 @@ class DatasetTaskService {
     }
 
     async execTick() {
-        const lastUpdated = Object.assign({}, this.task.lastUpdated);
+        const lastUpdated = { ...this.task.lastUpdated };
         try {
             const updated = await this.checkIfChangeWasUpdated();
             if (updated) {
@@ -69,8 +70,8 @@ class DatasetTaskService {
     async checkIfChangeWasUpdated() {
         try {
             const headers = await DatasetTaskService.getHeadersOfUrl(this.task.url);
-            const lastModified = headers.lastModified;
-            const contentLength = headers.contentLength;
+            const { lastModified } = headers;
+            const { contentLength } = headers;
             logger.debug('Checking if it is neccesary update');
             if ((lastModified || contentLength) && !this.task.lastUpdated) {
 
@@ -138,7 +139,7 @@ class DatasetTaskService {
         logger.debug('Executing tick', this.task);
         this.execTick().then(() => {
             logger.info(`Finish tick to task: ${this.task._id}`);
-        }, err => logger.error(`Error in task: ${this.task._id}`, err));
+        }, (err) => logger.error(`Error in task: ${this.task._id}`, err));
     }
 
 }

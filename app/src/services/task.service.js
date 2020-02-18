@@ -1,6 +1,6 @@
 const logger = require('logger');
 const TaskModel = require('models/task.model');
-const CronJob = require('cron').CronJob;
+const { CronJob } = require('cron');
 const DatasetTaskService = require('services/dataset-task.service');
 const RetraivingError = require('errors/retraiving.error');
 const NotFoundError = require('errors/notFound.error');
@@ -13,7 +13,7 @@ class TaskService {
         logger.debug('Loading all tasks');
         const tasksFinded = await TaskModel.find();
         if (tasks) {
-            for (let i = 0, length = tasksFinded.length; i < length; i++) {
+            for (let i = 0, { length } = tasksFinded; i < length; i++) {
                 const task = tasksFinded[i];
                 const datasetTask = new DatasetTaskService(task);
                 tasks[task._id] = new CronJob(task.cronPattern, datasetTask.tick.bind(datasetTask), null, true, task.timezone);
@@ -47,7 +47,7 @@ class TaskService {
             datasetId: id
         });
         if (tasksFinded) {
-            for (let i = 0, length = tasksFinded.length; i < length; i++) {
+            for (let i = 0, { length } = tasksFinded; i < length; i++) {
                 const task = tasksFinded[i];
                 if (tasks[task._id]) {
                     tasks[task._id].stop();

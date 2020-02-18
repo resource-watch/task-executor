@@ -6,7 +6,7 @@ class TaskValidator {
 
     static async existTask(ctx, next) {
         const task = await TaskModel.findById(ctx.params.id);
-        if (!task) {
+        if (!task) {
             ctx.throw(404, 'Task not found');
             return;
         }

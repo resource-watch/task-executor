@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const Task = new Schema({
     datasetId: { type: String, required: true, trim: true },
     cronPattern: { type: String, required: true, trim: true },
     url: { type: String, required: true, trim: true },
-    timezone: { type: String, required: true, trim: true, default: 'Europe/Madrid' },
+    timezone: {
+        type: String, required: true, trim: true, default: 'Europe/Madrid'
+    },
     action: { type: String, required: true, trim: true },
     provider: { type: String, required: true, trim: true },
     dataPath: { type: String, required: false, trim: true },

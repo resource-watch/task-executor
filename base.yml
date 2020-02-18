@@ -1,9 +1,0 @@
-base:
-  build: .
-  ports:
-    - "5005:5005"
-  container_name: task-executor
-  environment:
-    PORT: 5005
-    NODE_PATH: app/src
-

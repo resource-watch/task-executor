@@ -2,10 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    name: {name}
-  name: {name}
+    name: task-async
+  name: task-async
 spec:
   ports:
     - port: 5005
   selector:
-    name: {name}
+    name: task-async

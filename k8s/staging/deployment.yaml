@@ -2,8 +2,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    name: {name}
-  name: {name}
+    name: task-async
+  name: task-async
 spec:
   revisionHistoryLimit: 0
   template:
@@ -11,11 +11,11 @@ spec:
       annotations:
         chaos.alpha.kubernetes.io/enabled: "true"
       labels:
-        name: {name}
+        name: task-async
     spec:
       containers:
-      - name: {name}
-        image: vizzuality/{name}
+      - name: task-async
+        image: vizzuality/task-async
         imagePullPolicy: Always
         resources:
           requests:
@@ -31,7 +31,7 @@ spec:
           - name: NODE_PATH
             value: app/src
           - name: LOCAL_URL
-            value: http://{name}.default.svc.cluster.local:5005
+            value: http://task-async.default.svc.cluster.local:5005
           - name: MONGO_URI
             valueFrom:
                 secretKeyRef:

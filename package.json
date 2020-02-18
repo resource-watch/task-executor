@@ -8,8 +8,8 @@
     "start": "NODE_PATH=app/src node app/index"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "https://github.com/vizzuality",
+  "license": "MIT",
   "devDependencies": {
     "assert": "^1.4.1",
     "babel-eslint": "^6.1.0",

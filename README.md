@@ -3,6 +3,11 @@
 
 This repository is the node skeleton microservice to create node microservice for WRI API
 
+## Dependencies
+
+Dependencies on other Microservices:
+- [Dataset](https://github.com/resource-watch/dataset/)
+
 1. [Getting Started](#getting-started)
 
 ## Getting Started

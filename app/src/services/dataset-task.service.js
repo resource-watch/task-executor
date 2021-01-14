@@ -1,7 +1,7 @@
 const logger = require('logger');
 const request = require('request-promise');
-const ctRegisterMicroservice = require('ct-register-microservice-node');
-const RetraivingError = require('errors/retraiving.error');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
+const RetrievingError = require('errors/retraiving.error');
 
 class DatasetTaskService {
 
@@ -26,7 +26,7 @@ class DatasetTaskService {
             options.uri = `/dataset/${this.task.datasetId}/data-overwrite`;
         }
 
-        await ctRegisterMicroservice.requestToMicroservice(options);
+        await RWAPIMicroservice.requestToMicroservice(options);
     }
 
     async execTick() {
@@ -59,7 +59,7 @@ class DatasetTaskService {
             resolveWithFullResponse: true
         });
         if (req.statusCode >= 400) {
-            throw new RetraivingError(400, `Error obtaining file. Status: ${req.statusCode}`);
+            throw new RetrievingError(400, `Error obtaining file. Status: ${req.statusCode}`);
         }
         return {
             lastModified: req.headers['last-modified'],

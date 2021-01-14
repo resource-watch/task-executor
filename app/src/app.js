@@ -4,7 +4,7 @@ const koaLogger = require('koa-logger');
 const config = require('config');
 const loader = require('loader');
 const convert = require('koa-convert');
-const ctRegisterMicroservice = require('ct-register-microservice-node');
+const { RWAPIMicroservice } = require('rw-api-microservice-node');
 const koaSimpleHealthCheck = require('koa-simple-healthcheck');
 const ErrorSerializer = require('serializers/error.serializer');
 const mongoose = require('mongoose');
@@ -76,27 +76,30 @@ async function init() {
 
             app.use(koaLogger());
 
+            app.use(RWAPIMicroservice.bootstrap({
+                name: config.get('service.name'),
+                info: require('../microservice/register.json'),
+                swagger: require('../microservice/public-swagger.json'),
+                logger,
+                baseURL: process.env.CT_URL,
+                url: process.env.LOCAL_URL,
+                token: process.env.CT_TOKEN,
+                fastlyEnabled: process.env.FASTLY_ENABLED,
+                fastlyServiceId: process.env.FASTLY_SERVICEID,
+                fastlyAPIKey: process.env.FASTLY_APIKEY
+            }));
+
             loader.loadRoutes(app);
 
-
             const server = app.listen(process.env.PORT, () => {
-                ctRegisterMicroservice.register({
-                    info: require('../microservice/register.json'),
-                    swagger: require('../microservice/public-swagger.json'),
-                    mode: (process.env.CT_REGISTER_MODE && process.env.CT_REGISTER_MODE === 'auto') ? ctRegisterMicroservice.MODE_AUTOREGISTER : ctRegisterMicroservice.MODE_NORMAL,
-                    framework: ctRegisterMicroservice.KOA2,
-                    app,
-                    logger,
-                    name: config.get('service.name'),
-                    ctUrl: process.env.CT_URL,
-                    url: process.env.LOCAL_URL,
-                    token: process.env.CT_TOKEN,
-                    active: true,
-                }).then(() => {
-                }, (error) => {
-                    logger.error(error);
-                    process.exit(1);
-                });
+                if (process.env.CT_REGISTER_MODE === 'auto') {
+                    RWAPIMicroservice.register().then(() => {
+                        logger.info('CT registration process started');
+                    }, (error) => {
+                        logger.error(error);
+                        process.exit(1);
+                    });
+                }
                 logger.info('Loading tasks');
                 TaskService.loadAllTasks().then(() => logger.info('Loaded all tasks correctly'), (error) => {
                     logger.error('Error loading tasks', error);

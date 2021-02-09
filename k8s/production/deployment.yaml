@@ -87,7 +87,7 @@ spec:
                   key: FASTLY_SERVICEID
                   name: mssecrets
                   optional: true
-          image: vizzuality/task-async
+          image: gfwdockerhub/task-async
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3

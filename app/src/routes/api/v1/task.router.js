@@ -57,7 +57,7 @@ const isMicroservice = async (ctx, next) => {
         loggedUser = JSON.parse(ctx.query.loggedUser);
     }
     if (!loggedUser) {
-        ctx.throw(403, 'Not authorized');
+        ctx.throw(401, 'Unauthorized');
         return;
     }
     if (loggedUser.id !== 'microservice') {
@@ -73,7 +73,7 @@ const isAdmin = async (ctx, next) => {
         loggedUser = JSON.parse(ctx.query.loggedUser);
     }
     if (!loggedUser) {
-        ctx.throw(403, 'Not authorized');
+        ctx.throw(401, 'Unauthorized');
         return;
     }
     if (loggedUser.role !== 'ADMIN') {
@@ -83,13 +83,25 @@ const isAdmin = async (ctx, next) => {
     await next();
 };
 
+const isAuthenticatedMiddleware = async (ctx, next) => {
+    logger.info(`Verifying if user is authenticated`);
+    const { query, body } = ctx.request;
+
+    const user = { ...(query.loggedUser ? JSON.parse(query.loggedUser) : {}), ...body.loggedUser };
+
+    if (!user || !user.id) {
+        ctx.throw(401, 'Unauthorized');
+        return;
+    }
+    await next();
+};
+
 router.get('/', isAdmin, TaskRouter.get);
 // TODO: Check permissions to this endpoint
 // router.delete('/:id', isAdmin, TaskValidator.existTask, TaskRouter.get);
 router.post('/sync-dataset', isMicroservice, TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.createTaskSyncDataset);
-router.put('/sync-dataset/by-dataset', TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.updateTaskSyncDataset);
-router.delete('/sync-dataset/by-dataset/:id', TaskRouter.removeTaskSyncDataset);
-router.post('/sync-dataset/by-dataset/:id/hook', TaskRouter.hook);
-
+router.put('/sync-dataset/by-dataset', isAuthenticatedMiddleware, TaskValidator.createOrUpdateTaskSyncDataset, TaskRouter.updateTaskSyncDataset);
+router.delete('/sync-dataset/by-dataset/:id', isAuthenticatedMiddleware, TaskRouter.removeTaskSyncDataset);
+router.post('/sync-dataset/by-dataset/:id/hook', isAuthenticatedMiddleware, TaskRouter.hook);
 
 module.exports = router;

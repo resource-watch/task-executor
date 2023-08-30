@@ -20,6 +20,7 @@
     "node": "~20.4"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.8",
     "@types/config": "^3.3.0",
     "@types/jsonapi-serializer": "^3.6.5",
     "@types/koa-logger": "^3.1.2",

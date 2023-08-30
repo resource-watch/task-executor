@@ -58,7 +58,7 @@ You can now access the microservice through the API gateway.
 
 It is necessary to define these environment variables:
 
-* CT_URL => Control Tower URL
+* GATEWAY_URL => Control Tower URL
 * NODE_ENV => Environment (prod, staging, dev)
 
 

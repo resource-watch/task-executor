@@ -1,17 +1,17 @@
 {
-     "logger": {
-        "name": "task-executor-DEV",
-        "level": "debug",
-        "toFile": false,
-        "dirLogFile": null
-    },
-    "service": {
-        "name": "Task executor",
-        "port": 5005
-    },
-    "mongodb":{
-        "database": "task_executor_db",
-        "host": "mymachine",
-        "port": 27017
-    }
+  "logger": {
+    "name": "task-executor-DEV",
+    "level": "debug",
+    "toFile": false,
+    "dirLogFile": null
+  },
+  "service": {
+    "name": "Task executor",
+    "port": 5005
+  },
+  "mongodb": {
+    "database": "task_executor_db",
+    "host": "mymachine",
+    "port": 27017
+  }
 }
